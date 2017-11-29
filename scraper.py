@@ -5,9 +5,13 @@ from urllib.parse import urlsplit
 from collections import deque
 import re
 import csv
+import winsound
+
+x = input("Enter full URL from site including http://www.")
+pdf = "pdf"
 
 # a queue of urls to be crawled
-new_urls = deque(['http://www.rgare.com/'])
+new_urls = deque([x])
 
 # a set of urls that we have already crawled
 processed_urls = set()
@@ -33,13 +37,14 @@ while len(new_urls):
         response = requests.get(url)
     except (requests.exceptions.MissingSchema, requests.exceptions.ConnectionError):
         # ignore pages with errors
-        continue
+       continue
 
-    # extract all email addresses and add them into the resulting set
+    # extract all email addresses and add them into the resulting file
     new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
     with open('emails.csv', 'w') as f:
         filewriter = csv.writer(f, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         filewriter.writerow(new_emails)
+    f.closed
 
     # create a beautiful soup for the html document
     soup = BeautifulSoup(response.text)
@@ -54,5 +59,10 @@ while len(new_urls):
         elif not link.startswith('http'):
             link = path + link
         # add the new url to the queue if it was not enqueued nor processed yet
-        if not link in new_urls and not link in processed_urls:
+        if not link in new_urls and not link in processed_urls and not pdf in new_urls:
             new_urls.append(link)
+
+#play a beep when the program is done
+duration = 1000 #millisecond
+freq = 440 #Hz
+winsound.Beep(freq, duration)
