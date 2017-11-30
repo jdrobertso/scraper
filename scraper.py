@@ -47,7 +47,7 @@ while len(new_urls):
     f.closed
 
     # create a beautiful soup for the html document
-    soup = BeautifulSoup(response.text)
+    soup = BeautifulSoup(response.text, "html.parser")
 
     # find and process all the anchors in the document
     for anchor in soup.find_all("a"):
@@ -58,8 +58,13 @@ while len(new_urls):
             link = base_url + link
         elif not link.startswith('http'):
             link = path + link
+        link1 = str(link)
+        if "pdf" in link1:
+            link = "123"
+        if "JavaScript" in link1:
+            link = "123"    
         # add the new url to the queue if it was not enqueued nor processed yet
-        if not link in new_urls and not link in processed_urls and not pdf in new_urls:
+        if not link in new_urls and not link in processed_urls:
             new_urls.append(link)
 
 #play a beep when the program is done
