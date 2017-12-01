@@ -7,7 +7,7 @@ import re
 import csv
 import winsound
 
-x = input("Enter full URL from site including http://www.")
+x = input("Enter full URL from site (including http://www.) -- ")
 pdf = "pdf"
 
 # a queue of urls to be crawled
@@ -41,7 +41,7 @@ while len(new_urls):
 
     # extract all email addresses and add them into the resulting file
     new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
-    with open('emails.csv', 'w') as f:
+    with open('emails.csv', 'a') as f:
         filewriter = csv.writer(f, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         filewriter.writerow(new_emails)
     f.closed
@@ -59,10 +59,8 @@ while len(new_urls):
         elif not link.startswith('http'):
             link = path + link
         link1 = str(link)
-        if "pdf" in link1:
+        if "pdf" in link1 or "JavaScript" in link1 or "javascript" in link1:
             link = "123"
-        if "JavaScript" in link1:
-            link = "123"    
         # add the new url to the queue if it was not enqueued nor processed yet
         if not link in new_urls and not link in processed_urls:
             new_urls.append(link)
